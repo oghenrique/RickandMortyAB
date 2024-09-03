@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
@@ -47,6 +48,7 @@ fun CharactersList(modifier: Modifier = Modifier) {
 
     callCharacterList.enqueue(object : Callback<Result>{
         override fun onResponse(p0: Call<Result>, p1: Response<Result>) {
+            characterList = p1.body()!!.results
         }
 
         override fun onFailure(p0: Call<Result>, p1: Throwable) {
@@ -66,8 +68,8 @@ fun CharactersList(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(32.dp))
             LazyColumn {
-                items(5) {
-                    CharacterCard(character = Character())
+                items(characterList) {
+                    CharacterCard(character = it)
                 }
             }
         }
@@ -96,7 +98,7 @@ fun CharacterCard(character: Character) {
                 )
         ) {
             AsyncImage(
-                model = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+                model = character.image,
                 contentDescription = ""
             )
         }
@@ -107,11 +109,11 @@ fun CharacterCard(character: Character) {
                 .padding(start = 8.dp)
         ) {
             Text(
-                text = "Nome do personagem",
+                text = character.name,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
                 )
-            Text(text = "Espécie")
+            Text(text = character.species)
         }
         }
     }
